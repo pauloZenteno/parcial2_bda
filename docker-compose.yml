@@ -1,0 +1,47 @@
+version: '3.8'
+services:
+  # 1. Base de Datos Relacional (PostgreSQL) - Para Inventario y Usuarios
+  postgres:
+    image: postgres:15
+    container_name: pharma_sql
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: adminpassword
+      POSTGRES_DB: pharmaflow_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  # 2. Base de Datos Documental (MongoDB) - Para Ensayos Clínicos
+  mongo:
+    image: mongo:6
+    container_name: pharma_mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodata:/data/db
+
+  # 3. Base de Datos Clave-Valor (Redis) - Para Sesiones y Precios volátiles
+  redis:
+    image: redis:alpine
+    container_name: pharma_redis
+    ports:
+      - "6379:6379"
+
+  # 4. Base de Datos de Grafos (Neo4j) - Para Compuestos Químicos
+  neo4j:
+    image: neo4j:5
+    container_name: pharma_neo4j
+    environment:
+      NEO4J_AUTH: neo4j/password123
+    ports:
+      - "7474:7474" # HTTP
+      - "7687:7687" # Bolt
+    volumes:
+      - neo4jdata:/data
+
+volumes:
+  pgdata:
+  mongodata:
+  neo4jdata:
